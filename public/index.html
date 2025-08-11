@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Tools</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: var(--text); }
+    :root { --bg: #fff; --text: #000; }
+    body.dark { --bg: #121212; --text: #f0f0f0; }
+    .container { max-width: 800px; margin: auto; padding: 20px; }
+    button { padding: 10px; margin: 5px; border-radius: 5px; border: none; cursor: pointer; }
+    textarea { width: 100%; height: 150px; margin: 10px 0; border-radius: 5px; padding: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Tools</h1>
+    <button onclick="setMode()">Toggle Dark/Light</button>
+    <hr />
+    <h2>Summarizer</h2>
+    <textarea id="sumInput" placeholder="Paste text here..."></textarea>
+    <button onclick="summarize()">Summarize</button>
+    <p id="sumOutput"></p>
+
+    <h2>Quiz Generator</h2>
+    <textarea id="quizInput" placeholder="Paste text here..."></textarea>
+    <button onclick="quiz()">Generate Quiz</button>
+    <p id="quizOutput"></p>
+
+    <h2>Chatbot</h2>
+    <textarea id="chatInput" placeholder="Say something..."></textarea>
+    <button onclick="chat()">Send</button>
+    <p id="chatOutput"></p>
+  </div>
+
+  <script>
+    let dark = false;
+    function setMode() {
+      dark = !dark;
+      document.body.classList.toggle('dark', dark);
+    }
+    async function summarize() {
+      let text = document.getElementById("sumInput").value;
+      let res = await fetch('/.netlify/functions/groq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'summarize', text })
+      });
+      document.getElementById("sumOutput").innerText = await res.text();
+    }
+    async function quiz() {
+      let text = document.getElementById("quizInput").value;
+      let res = await fetch('/.netlify/functions/groq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'quiz', text })
+      });
+      document.getElementById("quizOutput").innerText = await res.text();
+    }
+    async function chat() {
+      let text = document.getElementById("chatInput").value;
+      let res = await fetch('/.netlify/functions/groq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'chat', text })
+      });
+      document.getElementById("chatOutput").innerText = await res.text();
+    }
+  </script>
+</body>
+</html>
